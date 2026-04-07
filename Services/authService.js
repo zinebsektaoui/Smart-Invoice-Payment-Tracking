@@ -4,12 +4,13 @@ const jwt = require("jsonwebtoken")
 
 
 async function registerService(req, res) {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
   const hashedPassword = await bcrpyt.hash(password, 12);
   const user = await User.create({
     name,
     email,
-    password: hashedPassword
+    password: hashedPassword,
+    role
   });
   const token = jwt.sign(
       {userId : user._id, email : user.email, role : user.role},
@@ -37,4 +38,12 @@ async function loginService(req, res) {
     res.setHeader("Authorization", `Bearer ${token}`);
     return [user, token]
 }
-module.exports = {registerService, loginService}
+
+async function myProfileService(req, res) {
+  const user = await User.find({ _id: req.user.userId }).select("-password")
+  if(!user){
+    return res.status(404).json({error : "User not found"})
+  }
+  return user
+}
+module.exports = {registerService, loginService, myProfileService}
