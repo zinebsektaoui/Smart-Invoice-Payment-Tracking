@@ -14,7 +14,9 @@ async function loginController(req, res) {
 
 async function myProfileController(req, res) {
   const user = await myProfileService(req, res)
-  user.password = undefined
+  if (!user) {
+    return res.status(404).json({ error: "User not found" })
+  }
   return res.status(200).json({user})
 }
 module.exports = {registerController, loginController, myProfileController}
