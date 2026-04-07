@@ -9,14 +9,28 @@ const createSupplier = async(req, res) => {
         name,
         phone,
         email,
-        address
+        address,
+        clientId : req.user.userId
     });
     return res.status(201).json({message : "Supplier created successfully", supplier})
 }
 
 const getSuppliers = async(req, res) => {
-    const suppliers = await Supplier.find({userId : req.user._id})
+    const suppliers = await Supplier.find({userId : req.user.userId})// hadshy makhdamsh
+    if(suppliers.length === 0) {
+        return res.status(404).json({message : "No suppliers found"})
+    }
     return res.status(200).json({suppliers})
 }
 
-module.exports = {createSupplier, getSuppliers}
+
+const dropSupplier = async(req, res) => {
+    const {id} = req.params
+    const supplier = await Supplier.findByIdAndDelete(id)
+    if(!supplier) {
+        return res.status(404).json({message : "Supplier not found"})
+    }
+    return res.status(200).json({message : "Supplier deleted successfully"})
+}
+
+module.exports = {createSupplier, getSuppliers, dropSupplier}
