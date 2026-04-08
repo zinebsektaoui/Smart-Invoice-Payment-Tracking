@@ -12,6 +12,10 @@ const invoiceSchema = new mongoose.Schema({
         required : true        
     }, description : {
         type : String
+    },status : {
+        type : String,
+        enum : ["unpaid", "partially_paid", "paid"],
+        default : "unpaid"
     },clientId : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "User"
