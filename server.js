@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const { userRoute } = require("./Routes/authRoute");
 const supplierRoute = require("./Routes/supplierRoute")
+const invoiceRoute = require("./Routes/invoiceRoute")
 
 dotenv.config();
 const app = express();
@@ -13,6 +14,7 @@ const MONGODB_URL = process.env.MONGODB_URI;
 
 app.use("/api/auth", userRoute);
 app.use("/api/suppliers", supplierRoute);
+app.use("/api/invoices", invoiceRoute)
 
 app.listen(port, async () => {
   console.log(`Server running on port ${port}`);
