@@ -8,7 +8,7 @@ const supplierSchema = new mongoose.Schema({
         min:2
     },
     phone : {
-        type : Number,
+        type : String,
     },
     email : {
         type : String,
@@ -20,6 +20,8 @@ const supplierSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "User"
     }
+},{
+    timestamps : true
 })
 
 const Supplier = mongoose.model("Supplier", supplierSchema)
