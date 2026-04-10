@@ -11,9 +11,6 @@ const createInvoice = async(req, res) => {
         if(!supplier){
             return res.status(404).json({message : "Supplier ID not found"})
         }
-        if(supplier.clientId != req.user.userId){
-            return res.status(403).json({error : "The supplier id you gived is not correspending to the connected client !"})
-        }
         const invoice = {
             supplierId,
             amount,
@@ -54,6 +51,23 @@ const getById = async(req, res) => {
 
 const update = async(req, res) => {
     const {id} = req.params
-    const invoice = await Invoice.findOne({})
+    const invoice = await Invoice.findByIdAndUpdate(id,req.body, {new : true})
+    if(!invoice){
+        return res.status(404).json({message : "Invoice not found"})
+    }
+    if(invoice.status === "paid"){
+        return res.status(422).json({message : "This invoice is tottally paid, you can't update on it !"})
+    }
+    return res.status(200).json({message : "Invoice updated", invoice})
 }
-module.exports = {createInvoice, getAll, getById}
+
+const deleteInvoice = async(req, res) => {
+    const {id} = req.params
+    const invoice = await Invoice.findById(id)
+    if(!invoice){
+        return res.status(404).json({message : "Invoice not found !"})
+    } 
+    await Invoice.deleteOne(invoice)
+    return res.status(200).json({message : "Invoice deleted"})
+}
+module.exports = {createInvoice, getAll, getById, update, deleteInvoice}
