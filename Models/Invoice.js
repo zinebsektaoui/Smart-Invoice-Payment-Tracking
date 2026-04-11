@@ -19,14 +19,14 @@ const invoiceSchema = new mongoose.Schema(
       enum: ["unpaid", "partially_paid", "paid"],
       default: "unpaid",
     },
-    // tottalPaid: {
-    //     type: Number,
-    //     default: 0,
-    // },
-    // remainingAmount: {
-    //     type: Number,
-    //     default: 0
-    // },
+    tottalPaid: {
+        type: Number,
+        default: 0,
+    },
+    remainingAmount: {
+        type: Number,
+        default: 0
+    },
     supplierId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Supplier",
