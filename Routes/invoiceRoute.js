@@ -5,9 +5,10 @@ const validateMiddleware = require("../Middlewares/validateMiddleware")
 const {authMiddleware} = require("../Middlewares/authMiddleware")
 const invoiceValidator = require("../Validators/invoiceValidator")
 const {correspending} = require("../Middlewares/Correspondence")
+const {CheckAmountPayed} = require("../Middlewares/IsBiggerThanAmount")
 
 // Payment imports
-const {createPaymentController} = require("../Controllers/paymentController")
+const {createPaymentController, getInvoiceDetailsController} = require("../Controllers/paymentController")
 const paymentValidator = require("../Validators/paymentValidator")
 
 const invoiceRoute = express.Router()
@@ -19,6 +20,7 @@ invoiceRoute.delete("/:id", authMiddleware, roleMiddleware("Client"), correspend
 invoiceRoute.put("/:id", authMiddleware, roleMiddleware("Client"), correspending, update)
 
 // Payment routes
-invoiceRoute.post("/:id/payments", authMiddleware, roleMiddleware("Client"), correspending, validateMiddleware(paymentValidator), createPaymentController)
+invoiceRoute.post("/:id/payments", authMiddleware, roleMiddleware("Client"), correspending, validateMiddleware(paymentValidator), CheckAmountPayed,createPaymentController)
+invoiceRoute.get("/:id/payments", authMiddleware, roleMiddleware("Client"), correspending, getInvoiceDetailsController)
 
 module.exports = invoiceRoute
