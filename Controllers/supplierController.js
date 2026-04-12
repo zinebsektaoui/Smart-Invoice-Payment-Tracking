@@ -68,7 +68,9 @@ const update = async(req, res) => {
 const getStats = async(req, res) => {
     const {id} = req.params
     const supplier = await Supplier.findById(id).select("_id name")
-
+    if(!supplier) {
+        return res.status(404).json({message : "supplier not found !"})
+    }
     const invoices = await Invoice.find({supplierId : id})
     const totalInvoices = invoices.length
 
@@ -77,10 +79,20 @@ const getStats = async(req, res) => {
     let totalRemaining = 0
     let totalAllSuppliers = 0
 
+    const invoiceByStatus = {
+        paid : 0,
+        unpaid : 0,
+        partially_paid : 0
+    }
+
     invoices.forEach(el => {
         totalAmount += el.amount
         totalPaid += el.tottalPaid
-        totalRemaining += el.remainingAmount 
+        totalRemaining += el.remainingAmount
+
+        if(el.status === "paid") invoiceByStatus.paid++
+        if(el.status === "unpaid") invoiceByStatus.unpaid++
+        if(el.status === "partially_paid") invoiceByStatus.partially_paid++
     }); 
 
     const invoicesOfClient = await Invoice.find({clientId : req.user.userId})
@@ -97,7 +109,8 @@ const getStats = async(req, res) => {
         totalAmount,
         totalPaid,
         totalRemaining,
-        percentage
+        percentage,
+        invoiceByStatus
     });
 }
 module.exports = {createSupplier, getSuppliers, dropSupplier, getOneSupplier, update, getStats}
