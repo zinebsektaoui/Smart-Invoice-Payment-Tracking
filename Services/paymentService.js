@@ -18,7 +18,6 @@ async function createPaymentService(req, res) {
   if (invoice.status === "paid") {
     return res.status(422).json({ error: "Invoice is already paid" });
   }
-  // update totals
   invoice.tottalPaid += amount;
 
   invoice.remainingAmount = invoice.amount - invoice.tottalPaid;
@@ -28,7 +27,6 @@ async function createPaymentService(req, res) {
       message: `You can't pay more than ${invoice.remainingAmount}`
     });
   }
-  // update status
   if (invoice.tottalPaid === invoice.amount) {
     invoice.status = "paid";
   } else if (invoice.tottalPaid > 0) {
@@ -53,7 +51,7 @@ async function createPaymentService(req, res) {
 
   return res.status(201).json({
     payment: payment,
-    invoice: invoice  // hadi tzid bash treturni l'invoice m3a l'paiement
+    invoice: invoice
     });
 }
 
