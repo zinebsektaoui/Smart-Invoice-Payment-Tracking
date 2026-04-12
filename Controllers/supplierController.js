@@ -1,4 +1,5 @@
 const Supplier = require('../Models/Supplier')
+const Invoice = require("../Models/Invoice")
 
 const createSupplier = async(req, res) => {
     const { name, phone, email, address } = req.body;
@@ -63,4 +64,40 @@ const update = async(req, res) => {
     return res.status(200).json({success : "Supplier updated successfully", "New Data" : supplier})
 }
 
-module.exports = {createSupplier, getSuppliers, dropSupplier, getOneSupplier, update}
+
+const getStats = async(req, res) => {
+    const {id} = req.params
+    const supplier = await Supplier.findById(id).select("_id name")
+
+    const invoices = await Invoice.find({supplierId : id})
+    const totalInvoices = invoices.length
+
+    let totalAmount = 0
+    let totalPaid = 0
+    let totalRemaining = 0
+    let totalAllSuppliers = 0
+
+    invoices.forEach(el => {
+        totalAmount += el.amount
+        totalPaid += el.tottalPaid
+        totalRemaining += el.remainingAmount 
+    }); 
+
+    const invoicesOfClient = await Invoice.find({clientId : req.user.userId})
+    invoicesOfClient.forEach(el => {
+        totalAllSuppliers += el.amount
+    })
+    
+    const percentage = totalAllSuppliers === 0 ? 0 : (totalAmount / totalAllSuppliers) * 100
+    
+    return res.status(200).json({
+        supplierId: supplier._id,
+        supplierName: supplier.name,
+        totalInvoices,
+        totalAmount,
+        totalPaid,
+        totalRemaining,
+        percentage
+    });
+}
+module.exports = {createSupplier, getSuppliers, dropSupplier, getOneSupplier, update, getStats}
