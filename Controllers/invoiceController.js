@@ -1,5 +1,6 @@
 const Invoice = require("../Models/Invoice")
 const Supplier = require("../Models/Supplier")
+const Payment = require("../Models/Payment")
 
 const createInvoice = async(req, res) => {
     try {
@@ -64,9 +65,13 @@ const update = async(req, res) => {
 const deleteInvoice = async(req, res) => {
     const {id} = req.params
     const invoice = await Invoice.findById(id)
+    const payment = await Payment.find({invoiceId : id})
     if(!invoice){
         return res.status(404).json({message : "Invoice not found !"})
-    } 
+    }
+    if(payment.length > 0){
+        return res.status(422).json({message : "You can't delete this invoice beacause it is corresponding to a payment !"})
+    }
     await Invoice.deleteOne(invoice)
     return res.status(200).json({message : "Invoice deleted"})
 }
