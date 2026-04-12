@@ -25,7 +25,9 @@ const invoiceSchema = new mongoose.Schema(
     },
     remainingAmount: {
         type: Number,
-        default: 0
+        default: function() {
+          return this.amount
+        },
     },
     supplierId: {
       type: mongoose.Schema.Types.ObjectId,
