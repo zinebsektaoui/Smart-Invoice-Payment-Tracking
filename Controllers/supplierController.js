@@ -85,6 +85,7 @@ const getStats = async(req, res) => {
         partially_paid : 0
     }
 
+
     invoices.forEach(el => {
         totalAmount += el.amount
         totalPaid += el.tottalPaid
@@ -97,10 +98,10 @@ const getStats = async(req, res) => {
 
     const invoicesOfClient = await Invoice.find({clientId : req.user.userId})
     invoicesOfClient.forEach(el => {
-        totalAllSuppliers += el.amount
+        totalAmountOfInvoicesClient += el.amount
     })
     
-    const percentage = totalAllSuppliers === 0 ? 0 : (totalAmount / totalAllSuppliers) * 100
+    const percentage = totalAmountOfInvoicesClient === 0 ? 0 : (totalAmount / totalAmountOfInvoicesClient) * 100
     
     return res.status(200).json({
         supplierId: supplier._id,

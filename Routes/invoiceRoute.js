@@ -1,5 +1,5 @@
 const express = require("express")
-const {createInvoice, getAll, getById, deleteInvoice, update} = require("../Controllers/invoiceController")
+const {createInvoice, getAll, getById, deleteInvoice, update, datedepasse, reminder} = require("../Controllers/invoiceController")
 const {roleMiddleware} = require("../Middlewares/roleMiddleware")
 const validateMiddleware = require("../Middlewares/validateMiddleware")
 const {authMiddleware} = require("../Middlewares/authMiddleware")
@@ -23,4 +23,8 @@ invoiceRoute.put("/:id", authMiddleware, roleMiddleware("Client"), correspending
 invoiceRoute.post("/:id/payments", authMiddleware, roleMiddleware("Client"), correspending, validateMiddleware(paymentValidator), CheckAmountPayed,createPaymentController)
 invoiceRoute.get("/:id/payments", authMiddleware, roleMiddleware("Client"), correspending, getInvoiceDetailsController)
 
+
+// overdue 
+invoiceRoute.get("/invoices/overdue", authMiddleware, roleMiddleware("Client"), datedepasse)
+invoiceRoute.post("/invoices/:id/remind",  authMiddleware, roleMiddleware("Client"), reminder)
 module.exports = invoiceRoute

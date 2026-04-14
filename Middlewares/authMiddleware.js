@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken")
 
 const authMiddleware = (req, res, next) => {
-    const authHeader = req.headers.authorization;// Jib token men header
+    const authHeader = req.headers.authorization;// recupere le token depuis le header
     if (!authHeader) {
         return res.status(401).json({ message: "Access denied Token manquant." });
     }
