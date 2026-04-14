@@ -75,4 +75,24 @@ const deleteInvoice = async(req, res) => {
     await Invoice.deleteOne(invoice)
     return res.status(200).json({message : "Invoice deleted"})
 }
-module.exports = {createInvoice, getAll, getById, update, deleteInvoice}
+
+const datedepasse = async(req, res) => {
+    const invoices = await Invoice.find()
+    invoices.forEach(invoice => {
+        if(invoice.dueDate >= Date.now() && invoice.status === "paid"){
+            return res.status(200).json({message : invoice})
+        }
+    })
+}
+
+const reminder = async(req, res) => {
+    const {id} = req.params
+    const invoice = await Invoice.findByIdAndUpdate(id)
+     if(!invoice){
+        return res.status(404).json({message : "invoice not found"})
+    }
+    invoice.lastReminder = Date.now()
+    invoice.save()
+    return res.status(200).json(invoice)
+}
+module.exports = {createInvoice, getAll, getById, update, deleteInvoice, datedepasse, reminder}
